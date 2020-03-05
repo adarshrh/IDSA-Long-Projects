@@ -112,6 +112,8 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
         return get(u).cno;
     }
 
+    public  DFS stronglyConnectedComponents(Graph g) { return null; }
+
     // Find topological oder of a DAG using DFS. Returns null if g is not a DAG.
     public static List<Graph.Vertex> topologicalOrder1(Graph g) {
         DFS d = new DFS(g);

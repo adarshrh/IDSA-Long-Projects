@@ -26,10 +26,9 @@ public class Euler extends GraphAlgorithm<Euler.EulerVertex> {
     
 	// You need this if you want to store something at each node
     static class EulerVertex implements Factory {
-	        
 
         EulerVertex(Vertex u) {
-	    
+
         }
 	public EulerVertex make(Vertex u) { return new EulerVertex(u); }
 
@@ -39,7 +38,7 @@ public class Euler extends GraphAlgorithm<Euler.EulerVertex> {
 	public Euler(Graph g, Vertex start) {
 	super(g, new EulerVertex(null));
 	this.start = start;
-	
+
 	tour = new LinkedList<>();
     }
 
@@ -50,7 +49,24 @@ public class Euler extends GraphAlgorithm<Euler.EulerVertex> {
      * "Graph is not strongly connected"
      */
     public boolean isEulerian() {
-		return false;
+        Vertex[] vertexArr = this.g.getVertexArray();
+
+        for (Vertex v : vertexArr){
+            if(v.inDegree()!= v.outDegree()){
+                System.out.println("Graph is not Eulerian");
+                System.out.println("inDegree = "+v.inDegree()+" outDegree = "+v.outDegree()+ " at Vertex "+v.name);
+                return false;
+            }
+        }
+       DFS dfs = new DFS(this.g);
+       //TODO implement stronglyConnectedComponents in DFS.java
+       dfs = dfs.stronglyConnectedComponents(this.g);
+       if(dfs.connectedComponents()!=1){
+           System.out.println("Graph is not Eulerian");
+           System.out.println("Graph is not strongly connected");
+           return false;
+       }
+        return true;
 	}
 
 
