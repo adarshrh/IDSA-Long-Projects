@@ -6,10 +6,10 @@
 package axh190002;
 
 import axh190002.Graph.Vertex;
-import sjc160330.DFS;
-import sjc160330.Graph;
-import sjc160330.PERT;
-import sjc160330.PERT.PERTVertex;
+import axh190002.DFS;
+import axh190002.Graph;
+import axh190002.PERT;
+import axh190002.PERT.PERTVertex;
 import axh190002.Graph.Edge;
 import axh190002.Graph.GraphAlgorithm;
 import axh190002.Graph.Factory;
