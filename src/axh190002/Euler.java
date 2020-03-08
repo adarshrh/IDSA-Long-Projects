@@ -55,14 +55,13 @@ public class Euler extends GraphAlgorithm<Euler.EulerVertex> {
                 return false;
             }
         }
-    /*   DFS dfs = new DFS(this.g);
-       //TODO implement stronglyConnectedComponents in DFS.java
+      DFS dfs = new DFS(this.g);
        dfs = dfs.stronglyConnectedComponents(this.g);
        if(dfs.connectedComponents()!=1){
            System.out.println("Graph is not Eulerian");
            System.out.println("Graph is not strongly connected");
            return false;
-       }*/
+       }
         return true;
 	}
 
