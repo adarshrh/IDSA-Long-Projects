@@ -124,7 +124,11 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
     return get(u).cno;
   }
 
-
+  /**
+   * Finds strongly connected components of the graph g
+   * @param g
+   * @return
+   */
   public DFS stronglyConnectedComponents(Graph g) {
     Stack<Integer> stack = new Stack<>();
     boolean visited[] = new boolean[g.n+1];
@@ -161,50 +165,18 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
         System.out.println();
       }
     }
-
-
-  /*  Deque<Graph.Vertex> stack = new ArrayDeque<>();
-    DFS d = new DFS(g);
-    boolean [] visited1 =new boolean[g.n+1];
-
-    for (Vertex v : g) {
-        if(visited1[v.getName()]==false)
-            DFSUtil(v, visited1, stack);
-    }
-    g.reverseGraph();
-    for(Vertex v : g)
-        visited1[v.getName()]=false;
-
-
-    sccSet = new ArrayList<>();
-    int stackSize = stack.size();
-    while (!stack.isEmpty()) {
-      Vertex vertex = g.getVertex(stack.poll().getName());
-      Set<Integer> set = new HashSet<>();
-        if(visited1[vertex.getName()]==false){
-            DFSUtilForReverseGraph(vertex, visited1, set);
-            if(set.size()==g.size()){
-              sccSet.add(set);
-              d.setNumberOfSCC(1);
-              d.setSccSet(sccSet);
-              g.reverseGraph();
-              return d;
-            }
-        }
-      sccSet.add(set);
-      if(set.size()>0)
-         numberOfSCC++;
-    }
-    d.setSccSet(sccSet);
-    d.setNumberOfSCC(numberOfSCC);
-    g.reverseGraph();
-    return d;*/
     d.setSccSet(sccSet);
     d.setNumberOfSCC(numberOfSCC);
     g.reverseGraph();
     return d;
   }
 
+  /**
+   * Runs dfs starting from vertex v and adds the visited vertex to resultSet which is a strongly connected component
+   * @param u
+   * @param visited
+   * @param resultSet
+   */
   private void DFSUtilForReverseGraph(Vertex u, boolean[] visited, List<Integer> resultSet) {
 
     visited[u.getName()] = true;
@@ -217,24 +189,15 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
       if (!visited[node.name])
         DFSUtilForReverseGraph(node,visited,resultSet);
     }
-    /* Stack<Vertex> dfsStack = new Stack<>();
-    dfsStack.push(u);
-    while (!dfsStack.empty()){
-      Vertex cur = dfsStack.pop();
-      resultSet.add(cur.name);
-      visited[cur.name] = true;
-      for (Graph.Edge e : g.incident(cur)) {
-        Graph.Vertex v = e.otherEnd(cur);
-
-        if(visited[v.name]==false){
-          dfsStack.push(v);
-        }
-
-      }
-    }*/
 
   }
 
+  /**
+   * Runs dfs starting from vertex v and adds the visited vertex to stack
+   * @param v
+   * @param visited
+   * @param stack
+   */
   private void DFSUtil(Vertex v, boolean[] visited, Stack<Integer> stack) {
     visited[v.getName()] = true;
     Iterator<Graph.Edge> itr = g.outEdges(v).iterator();
@@ -245,24 +208,6 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
       }
     }
     stack.push(v.name);
-    // visited.add(u.name);
-   /* Stack<Vertex> dfsStack = new Stack<>();
-    dfsStack.push(u);
-    while (!dfsStack.empty()){
-      Vertex cur = dfsStack.pop();
-      visited[cur.name] = true;
-      for (Graph.Edge e : g.incident(cur)) {
-        Graph.Vertex v = e.otherEnd(cur);
-
-        if(visited[v.name]==false){
-          dfsStack.push(v);
-        }
-
-      }
-      stack.offerFirst(cur);
-    }*/
-
-
   }
 
   // Find topological oder of a DAG using DFS. Returns null if g is not a DAG.
@@ -277,9 +222,6 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
   }
 
   public static void main(String[] args) throws Exception {
-     //  String string = "7 8   1 2 2   1 3 3   2 4 5   3 4 4   4 5 1   5 1 7   6 7 1   7 6 1 0";
-        //String string = "6 6   3 4 2   4 2 3   6 3 5   6 1 4   5 1 1   5 2 7 0";
-      //String string = "7 8   1 2 3   2 3 4   3 1 3   2 4 3   4 5 3   5 6 7   6 4 2   6 7 5";
     String string = "3 4   1 2 2   2 3 3   3 1 5   1 3 1 0";
 
     Scanner in;
@@ -289,7 +231,7 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
 
     // Read graph from input
     Graph g = Graph.readDirectedGraph(in);
-     // g.printGraph(false);
+      g.printGraph(false);
     DFS d = new DFS(g);
     d = d.stronglyConnectedComponents(g);
     System.out.println("Number of strongly connected components: "+d.connectedComponents());

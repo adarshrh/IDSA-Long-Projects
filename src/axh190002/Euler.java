@@ -67,7 +67,10 @@ public class Euler extends GraphAlgorithm<Euler.EulerVertex> {
         return true;
 	}
 
-
+    /**
+     * Returns the list of vertices in the order of Euler path
+     * @return
+     */
     public List<Vertex> findEulerTour() {
 	if(!isEulerian()) { return new LinkedList<>(); }
         Stack<Vertex> stack = new Stack<>();
@@ -94,10 +97,15 @@ public class Euler extends GraphAlgorithm<Euler.EulerVertex> {
 	        tour.addFirst(stack.pop());
         }
 	    tour.addFirst(start);
-       // Graph is Eulerian...find the tour and return tour
 	return tour;
     }
 
+    /**
+     * Returns the vertex which is not yet visited
+     * @param u
+     * @param g
+     * @return
+     */
     private Vertex getAdjacentVertex(Vertex u, Graph g) {
         Vertex adjacent = null;
         for (Edge e: g.adj(u).outEdges){
