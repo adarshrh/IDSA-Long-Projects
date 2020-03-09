@@ -24,6 +24,7 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 	Graph g;//graph given
 	PERTVertex [] nodes;//array of PERTVertexes from graph
 	ArrayList <Integer> crit= new ArrayList<Integer>();
+	int maxTime;
 	//crit contains a list of critical nodes
 	public static class PERTVertex implements Factory
 	{
@@ -35,7 +36,7 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 		int duration;
 		boolean isCrit;//is it a critical node
 		Vertex info;//vertex in the graph, for the edges
-		
+
 		/**
 		 * takes vertex and adds it to a set of other values for PERT
 		 * 
@@ -74,6 +75,8 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 		
 	}
 
+
+
 	public void setDuration(Vertex u, int d)
 	{
 		nodes[u.name-1].duration=d;
@@ -109,6 +112,7 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 			
 			
 		}
+       maxTime = nodes[topList.size()-1].ec;
 		//runs back through the topological order to set late complete
 		for(PERTVertex a : nodes)
 		{
@@ -166,8 +170,8 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 	public int criticalPath()
 	{
 		
-		int dur=0;
-		PERTVertex temp= nodes[0];
+	/*	int dur=0;
+		PERTVertex temp= nodes[1];
 		dur+=temp.duration;
 		//searches graph for critical nodes until end node
 		while(temp.info.outDegree()!=0)
@@ -183,7 +187,8 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 				
 			}
 		}
-		return dur;
+		return dur;*/
+	return maxTime;
 	}
 
 	public boolean critical(Vertex u)
@@ -213,11 +218,19 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 	public static PERT pert(Graph g, int[] duration)
 	{
 		PERT ret= new PERT(g);
+		Vertex source = g.getVertex(1);
+		Vertex target = g.getVertex(g.size());
 		int i=0;
 		for(Vertex u: g)
 		{
+			if(u.name!=1){
+				g.addEdge(source.getIndex(),u.getIndex(),1);
+			}
+			if(u.name!=g.size()){
+				g.addEdge(u.getIndex(),target.getIndex(),1);
+			}
+
 			ret.setDuration(u, duration[u.getIndex()]);
-			i++;
 		}
 		return ret;
 	}
@@ -234,12 +247,15 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 		Graph g = Graph.readDirectedGraph(in);
 		g.printGraph(false);
 
-		PERT p = new PERT(g);
-		System.out.println("len is: "+g.getVertexArray().length);
-		for (Vertex u : g)
+		int[] duration = new int[g.size()];
+		for(int i=0; i<g.size(); i++) {
+			duration[i] = in.nextInt();
+		}
+		PERT p = pert(g,duration);
+		/*for (Vertex u : g)
 		{
 			p.setDuration(u, in.nextInt());
-		}
+		}*/
 		
 		// Run PERT algorithm. Returns null if g is not a DAG
 		if (p.pert())
@@ -247,13 +263,12 @@ public class PERT extends GraphAlgorithm<PERT.PERTVertex>
 			System.out.println("Invalid graph: not a DAG");
 		} else
 		{
-			System.out.println("Number of critical vertices: " + p.numCritical());
-			System.out.println("u\tEC\tLC\tSlack\tCritical");
+			System.out.println("Output: "+ p.criticalPath()+" " + p.numCritical());
+			System.out.println("u\tDur\tEC\tLC\tSlack\tCritical");
 			for (Vertex u : g)
 			{
-				System.out.println(u + "\t" + p.ec(u) + "\t" + p.lc(u) + "\t" + p.slack(u) + "\t" + p.critical(u));
+				System.out.println(u + "\t" +duration[u.getIndex()]+"\t"+ p.ec(u) + "\t" + p.lc(u) + "\t" + p.slack(u) + "\t" + p.critical(u));
 			}
 		}
-		System.out.println("len of crit path: "+p.criticalPath());
 	}
 }
