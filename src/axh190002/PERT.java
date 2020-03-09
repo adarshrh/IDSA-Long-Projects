@@ -1,5 +1,10 @@
-/* Starter code for PERT algorithm (LP2)
- * @author rbk
+/**
+ * IDSA Long Project 2
+ * Group members:
+ * Adarsh Raghupati   axh190002
+ * Akash Akki         apa190001
+ * Keerti Keerti      kxk190012
+ * Stewart cannon     sjc160330
  */
 
 // change package to your netid

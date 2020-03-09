@@ -1,9 +1,11 @@
-/** Starter code for LP2
- *  @author rbk ver 1.0
- *  @author SA ver 1.1
+/**
+ * IDSA Long Project 2
+ * Group members:
+ * Adarsh Raghupati   axh190002
+ * Akash Akki         apa190001
+ * Keerti Keerti      kxk190012
+ * Stewart cannon     sjc160330
  */
-
-// change to your netid
 package axh190002;
 
 import axh190002.Graph.Vertex;

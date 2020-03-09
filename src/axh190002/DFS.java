@@ -1,22 +1,22 @@
-/** IDSA Short Project 5 Team members: Adarsh Raghupati axh190002 Keerti Keerti kxk190012 */
+/**
+ * IDSA Long Project 2
+ * Group members:
+ * Adarsh Raghupati   axh190002
+ * Akash Akki         apa190001
+ * Keerti Keerti      kxk190012
+ * Stewart cannon     sjc160330
+ */
+
 package axh190002;
 
 import axh190002.Graph.Vertex;
 
 import java.io.File;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
   public static boolean isCyclic;
-  private List<Set<Integer>> sccSet;
+  private List<List<Integer>> sccSet = new ArrayList<>();
   private int numberOfSCC;
 
 
@@ -24,7 +24,7 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
     this.numberOfSCC = numberOfSCC;
   }
 
-  public void setSccSet(List<Set<Integer>> sccSet) {
+  public void setSccSet(List<List<Integer>> sccSet) {
     this.sccSet = sccSet;
   }
 
@@ -124,8 +124,46 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
     return get(u).cno;
   }
 
+
   public DFS stronglyConnectedComponents(Graph g) {
-    Deque<Graph.Vertex> stack = new ArrayDeque<>();
+    Stack<Integer> stack = new Stack<>();
+    boolean visited[] = new boolean[g.n+1];
+    DFS d = new DFS(g);
+
+    for(int i = 0; i < visited.length; i++)
+      visited[i] = false;
+
+    for (int i = 1; i <= g.size(); i++)
+      if (visited[i] == false)
+        DFSUtil(g.getVertex(i), visited, stack);
+
+      g.reverseGraph();
+
+    for(int i = 0; i < visited.length; i++)
+      visited[i] = false;
+
+    while (stack.empty() == false)
+    {
+      List<Integer> set = new ArrayList<>();
+      // Pop a vertex from stack
+      int v = (int)stack.pop();
+
+      // Print Strongly connected component of the popped vertex
+      if (visited[v] == false)
+      {
+        DFSUtilForReverseGraph(g.getVertex(v), visited,set);
+
+        if(set.size()>0){
+          sccSet.add(set);
+          numberOfSCC++;
+        }
+
+        System.out.println();
+      }
+    }
+
+
+  /*  Deque<Graph.Vertex> stack = new ArrayDeque<>();
     DFS d = new DFS(g);
     boolean [] visited1 =new boolean[g.n+1];
 
@@ -160,11 +198,26 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
     d.setSccSet(sccSet);
     d.setNumberOfSCC(numberOfSCC);
     g.reverseGraph();
+    return d;*/
+    d.setSccSet(sccSet);
+    d.setNumberOfSCC(numberOfSCC);
+    g.reverseGraph();
     return d;
   }
 
-  private void DFSUtilForReverseGraph(Vertex u, boolean[] visited, Set<Integer> resultSet) {
-    Stack<Vertex> dfsStack = new Stack<>();
+  private void DFSUtilForReverseGraph(Vertex u, boolean[] visited, List<Integer> resultSet) {
+
+    visited[u.getName()] = true;
+    resultSet.add(u.getName());
+    Vertex node;
+    Iterator<Graph.Edge> itr = g.outEdges(u).iterator();
+    while (itr.hasNext())
+    {
+      node = itr.next().from;
+      if (!visited[node.name])
+        DFSUtilForReverseGraph(node,visited,resultSet);
+    }
+    /* Stack<Vertex> dfsStack = new Stack<>();
     dfsStack.push(u);
     while (!dfsStack.empty()){
       Vertex cur = dfsStack.pop();
@@ -178,13 +231,22 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
         }
 
       }
-    }
+    }*/
 
   }
 
-  private void DFSUtil(Vertex u, boolean[] visited, Deque<Vertex> stack) {
-   // visited.add(u.name);
-    Stack<Vertex> dfsStack = new Stack<>();
+  private void DFSUtil(Vertex v, boolean[] visited, Stack<Integer> stack) {
+    visited[v.getName()] = true;
+    Iterator<Graph.Edge> itr = g.outEdges(v).iterator();
+    while (itr.hasNext()){
+      Vertex node = itr.next().to;
+      if(!visited[node.name]){
+        DFSUtil(node,visited,stack);
+      }
+    }
+    stack.push(v.name);
+    // visited.add(u.name);
+   /* Stack<Vertex> dfsStack = new Stack<>();
     dfsStack.push(u);
     while (!dfsStack.empty()){
       Vertex cur = dfsStack.pop();
@@ -198,7 +260,7 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
 
       }
       stack.offerFirst(cur);
-    }
+    }*/
 
 
   }
@@ -227,7 +289,7 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
 
     // Read graph from input
     Graph g = Graph.readDirectedGraph(in);
-      g.printGraph(false);
+     // g.printGraph(false);
     DFS d = new DFS(g);
     d = d.stronglyConnectedComponents(g);
     System.out.println("Number of strongly connected components: "+d.connectedComponents());
