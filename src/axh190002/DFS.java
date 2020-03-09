@@ -235,11 +235,11 @@ public class DFS extends Graph.GraphAlgorithm<DFS.DFSVertex> {
     DFS d = new DFS(g);
     d = d.stronglyConnectedComponents(g);
     System.out.println("Number of strongly connected components: "+d.connectedComponents());
-
+    System.out.println("Components are:");
     d.sccSet.forEach(
         set -> {
-          set.forEach(v -> System.out.print(v + " "));
-          System.out.println();
+          System.out.print(set);
+          //System.out.println();
         });
   }
 }

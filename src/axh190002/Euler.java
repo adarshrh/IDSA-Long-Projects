@@ -138,7 +138,6 @@ public class Euler extends GraphAlgorithm<Euler.EulerVertex> {
         Vertex startVertex = g.getVertex(start);
         Timer timer = new Timer();
 
-    System.out.println("Euler tour start");
 	Euler euler = new Euler(g, startVertex);
 	List<Vertex> tour = euler.findEulerTour();
 	
