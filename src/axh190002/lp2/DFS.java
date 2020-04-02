@@ -7,9 +7,9 @@
  * Stewart cannon     sjc160330
  */
 
-package axh190002;
+package axh190002.lp2;
 
-import axh190002.Graph.Vertex;
+import axh190002.lp2.Graph.Vertex;
 
 import java.io.File;
 import java.util.*;

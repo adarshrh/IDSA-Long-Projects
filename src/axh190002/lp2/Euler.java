@@ -6,13 +6,13 @@
  * Keerti Keerti      kxk190012
  * Stewart cannon     sjc160330
  */
-package axh190002;
+package axh190002.lp2;
 
-import axh190002.Graph.Vertex;
-import axh190002.Graph.Edge;
-import axh190002.Graph.GraphAlgorithm;
-import axh190002.Graph.Factory;
-import axh190002.Graph.Timer;
+import axh190002.lp2.Graph.Vertex;
+import axh190002.lp2.Graph.Edge;
+import axh190002.lp2.Graph.GraphAlgorithm;
+import axh190002.lp2.Graph.Factory;
+import axh190002.lp2.Graph.Timer;
 
 import java.util.*;
 import java.io.File;
