@@ -9,6 +9,7 @@
  */
 package axh190002;
 
+import axh190002.RedBlackTree.Entry;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Stack;
@@ -41,7 +42,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
      * @return
      */
     public Entry<T> find(Entry<T> node,T x){
-        this.stck.push(null);
+     //   this.stck.push(null);
         if( node.element == x){
             return node;
         }
@@ -133,29 +134,46 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
 
 
 
-    /** Remove x from tree.
-     *  Return x if found, otherwise return null
-     */
-    public T remove(T x) {
+
+    public Entry remove(Entry y){
+        T x = (T) y.element;
         if (this.size == 0){
             return null;
         }else{
-            Entry<T> node = find(root,x);
+            BinarySearchTree.Entry<T> node =  find(root,x);
+            System.out.println("node elemet "+node.element);
+            //System.out.println("node color "+node.color);
+
             if(node.element.compareTo(x) != 0){
                 return null;
             }
-            T removed = node.element;
+            BinarySearchTree.Entry removed = new BinarySearchTree.Entry(node.element,null,null);
+
+
             if(null == node.left || node.left.element==null  || null == node.right || node.right.element==null){
                 connectChildToParent(node);
             }else{
                 this.stck.push(node);
                 Entry<T> minRight = find(node.right,x);
+                System.out.println("min Right "+minRight.element);
                 node.element = minRight.element;
                 connectChildToParent(minRight);
             }
             this.size--;
-            return removed;
+            System.out.println("removed in BST "+removed.element);
+            // System.out.println("removes color in BST "+removed.color);
+            return  removed;
         }
+    }
+
+    /** Remove x from tree.
+     *  Return x if found, otherwise return null
+     */
+
+
+    public T remove(T x) {
+         Entry removed = (Entry) remove(new Entry(x,null,null));
+         return (T) removed.element;
     }
 
     /**
@@ -265,7 +283,26 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
 
     public static void main(String[] args) {
 	BinarySearchTree<Integer> t = new BinarySearchTree<>();
-        Scanner in = new Scanner(System.in);
+        t.add(16);
+        t.add(12);
+        t.add(6);
+        t.add(5);
+        t.add(-4);
+        t.add(-5);
+        //rb.add(-8);
+        //  rb.add(-15);
+        t.add(-14);
+        t.add(18);
+        t.add(20);
+        t.add(22);
+        t.add(24);
+        t.add(26);
+        t.add(28);
+        t.add(30);
+        t.add(32);
+        t.remove(30);
+        t.printTree();
+       /* Scanner in = new Scanner(System.in);
         System.out.println("Enter positive number to add and negative number to remove element from the tree\n" +
                 "Enter 0 to print max and min elements and exit");
         while(in.hasNext()) {
@@ -291,7 +328,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
                 System.out.println("Max element is: "+max.toString()+ " Min element is: "+min.toString());
                 return;
             }
-        }
+        }*/
     }
 
 
