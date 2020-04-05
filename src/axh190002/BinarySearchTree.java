@@ -74,7 +74,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
      */
     public boolean contains(T x) {
         Entry<T> node = this.find(root,x);
-        if(null == node || node.element.compareTo(x) != 0) {
+        if(null == node || node.element==null|| node.element.compareTo(x) != 0) {
             return false;
         }else{
             return true;
