@@ -9,30 +9,30 @@
  */
 package axh190002;
 
-import axh190002.RedBlackTree.Entry;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Stack;
 
 public class BinarySearchTree<T extends Comparable<? super T>> implements Iterable<T> {
-    static class Entry<T> {
+    static class Entry<T extends Comparable<? super T>> {
         T element;
         Entry<T> left, right;
 
         public Entry(T x, Entry<T> left, Entry<T> right) {
             this.element = x;
-	    this.left = left;
-	    this.right = right;
+            this.left = left;
+            this.right = right;
         }
     }
-    
-    protected Entry<T> root;
+
+    Entry<T> root;
     int size;
     Stack<Entry<T>> stck = new Stack<>();
+    Entry<T> replaced;
 
     public BinarySearchTree() {
-	root = null;
-	size = 0;
+        root = null;
+        size = 0;
     }
 
     /**
@@ -42,14 +42,12 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
      * @return
      */
     public Entry<T> find(Entry<T> node,T x){
-     //   this.stck.push(null);
-        if( node.element == x){
+        if(node == null || node.element == x){
             return node;
         }
         while(true){
             if (x.compareTo(node.element) < 0){
                 if (null == node.left || node.left.element==null){
-                    stck.push(node);
                     break;
                 }else{
                     this.stck.push(node);
@@ -58,8 +56,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
             }else if (x.compareTo(node.element) == 0){
                 break;
             }else{
-                if(null == node.right || node.right.element==null){
-                    stck.push(node);
+                if(null == node.right|| node.right.element==null){
                     break;
                 }else{
                     this.stck.push(node);
@@ -77,9 +74,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
      */
     public boolean contains(T x) {
         Entry<T> node = this.find(root,x);
-        if(null == node || node.element==null || node.element.compareTo(x) != 0) {
-            //this.stck.clear();
-            //this.stck = new Stack<>();
+        if(null == node || node.element.compareTo(x) != 0) {
             return false;
         }else{
             return true;
@@ -99,81 +94,65 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
         }
     }
 
+    public Entry<T> add(Entry entry){
+        T x = (T) entry.element;
+        if(this.size == 0){
+            this.root = entry;
+            this.size++;
+            return root;
+        }else{
+            Entry<T> node = find(root,x);
+            if(x.compareTo(node.element) == 0){
+                node.element = x;
+                return null;
+            }else{
+                if(x.compareTo(node.element) < 0){
+                    node.left = entry;
+                }else{
+                    node.right = entry;
+                }
+                this.size++;
+                return entry;
+            }
+        }
 
-    public boolean add(T x) {
-        return add(new Entry<>(x, null,null));
     }
-
     /**
      *  If tree contains a node with same key, replace element by x.
      *  Returns true if x is a new element to be added to tree.
      */
-    public boolean add(Entry<T> x){
-      if(this.size == 0){
-        this.root = x;
-        this.size++;
-        return true;
-      }else{
-
-          Entry<T> node = find(root, x.element);
-        if(x.element.compareTo(node.element) == 0){
-          node.element = x.element;
-          return false;
-        }else{
-          if(x.element.compareTo(node.element) < 0){
-            node.left = x;
-          }else{
-            node.right = x;
-          }
-          this.size++;
-          return true;
-        }
-      }
-
-    }
-
-
-
-
-    public Entry remove(Entry y){
-        T x = (T) y.element;
-        if (this.size == 0){
-            return null;
-        }else{
-            BinarySearchTree.Entry<T> node =  find(root,x);
-            System.out.println("node elemet "+node.element);
-            //System.out.println("node color "+node.color);
-
-            if(node.element.compareTo(x) != 0){
-                return null;
+    public boolean add(T x) {
+            Entry entry = add(new Entry(x,null,null));
+            return entry==null?false:true;
             }
-            BinarySearchTree.Entry removed = new BinarySearchTree.Entry(node.element,null,null);
 
-
-            if(null == node.left || node.left.element==null  || null == node.right || node.right.element==null){
-                connectChildToParent(node);
-            }else{
-                this.stck.push(node);
-                Entry<T> minRight = find(node.right,x);
-                System.out.println("min Right "+minRight.element);
-                node.element = minRight.element;
-                connectChildToParent(minRight);
-            }
-            this.size--;
-            System.out.println("removed in BST "+removed.element);
-            // System.out.println("removes color in BST "+removed.color);
-            return  removed;
-        }
-    }
 
     /** Remove x from tree.
      *  Return x if found, otherwise return null
      */
-
-
     public T remove(T x) {
-         Entry removed = (Entry) remove(new Entry(x,null,null));
-         return (T) removed.element;
+        if (this.size == 0){
+            return null;
+        }else{
+            Entry<T> node = find(root,x);
+            if(node.element.compareTo(x) != 0){
+                return null;
+            }
+            T removed = node.element;
+            if(null == node.left || null == node.right || node.left.element==null || node.right.element==null){
+                connectChildToParent(node);
+               //push deleted node
+                stck.push(node);
+            }else{
+                this.stck.push(node);
+                Entry<T> minRight = find(node.right,x);
+                node.element = minRight.element;
+                connectChildToParent(minRight);
+                replaced = minRight;
+            }
+            this.size--;
+            return removed;
+        }
     }
 
     /**
@@ -183,7 +162,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
      */
     public void connectChildToParent(Entry<T> node){
         Entry<T> parent = this.stck.peek();
-        Entry<T> child = (null == node.left)?node.right:node.left;
+        Entry<T> child = (null == node.left || node.left.element==null)?node.right:node.left;
         if(null == parent){
             this.root = child;
         }else if(parent.left == node){
@@ -191,6 +170,7 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
         }else{
             parent.right = child;
         }
+        replaced = child;
     }
 
     /**
@@ -253,10 +233,10 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
 // Start of Optional problem 2
 
     /** Optional problem 2: Iterate elements in sorted order of keys
-	Solve this problem without creating an array using in-order traversal (toArray()).
+     Solve this problem without creating an array using in-order traversal (toArray()).
      */
     public Iterator<T> iterator() {
-	return null;
+        return null;
     }
 
     // Optional problem 2.  Find largest key that is no bigger than x.  Return null if there is no such key.
@@ -282,34 +262,15 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
 // End of Optional problem 2
 
     public static void main(String[] args) {
-	BinarySearchTree<Integer> t = new BinarySearchTree<>();
-        t.add(16);
-        t.add(12);
-        t.add(6);
-        t.add(5);
-        t.add(-4);
-        t.add(-5);
-        //rb.add(-8);
-        //  rb.add(-15);
-        t.add(-14);
-        t.add(18);
-        t.add(20);
-        t.add(22);
-        t.add(24);
-        t.add(26);
-        t.add(28);
-        t.add(30);
-        t.add(32);
-        t.remove(30);
-        t.printTree();
-       /* Scanner in = new Scanner(System.in);
+        BinarySearchTree<Integer> t = new BinarySearchTree<>();
+        Scanner in = new Scanner(System.in);
         System.out.println("Enter positive number to add and negative number to remove element from the tree\n" +
-                "Enter 0 to print max and min elements and exit");
+            "Enter 0 to print max and min elements and exit");
         while(in.hasNext()) {
             int x = in.nextInt();
             if(x > 0) {
                 System.out.print("Add " + x + " : ");
-                //t.add(1);
+                t.add(x);
                 t.printTree();
             } else if(x < 0) {
                 System.out.print("Remove " + x + " : ");
@@ -325,46 +286,25 @@ public class BinarySearchTree<T extends Comparable<? super T>> implements Iterab
                 Integer max = t.max();
                 Integer min = t.min();
                 if(max != null)
-                System.out.println("Max element is: "+max.toString()+ " Min element is: "+min.toString());
+                    System.out.println("Max element is: "+max.toString()+ " Min element is: "+min.toString());
                 return;
             }
-        }*/
+        }
     }
 
 
     public void printTree() {
-	System.out.print("[" + size + "]");
-	printTree(root);
-	System.out.println();
+        System.out.print("[" + size + "]");
+        printTree(root);
+        System.out.println();
     }
 
     // Inorder traversal of tree
     void printTree(Entry<T> node) {
-	if(node != null) {
-	    printTree(node.left);
-	    System.out.print(" " + node.element);
-	    printTree(node.right);
-	 }
-   }
+        if(node != null) {
+            printTree(node.left);
+            System.out.print(" " + node.element);
+            printTree(node.right);
+        }
+    }
 }
-/*
-Sample input:
-1 3 5 7 9 2 4 6 8 10 -3 -6 -3 0
-
-Output:
-Add 1 : [1] 1
-Add 3 : [2] 1 3
-Add 5 : [3] 1 3 5
-Add 7 : [4] 1 3 5 7
-Add 9 : [5] 1 3 5 7 9
-Add 2 : [6] 1 2 3 5 7 9
-Add 4 : [7] 1 2 3 4 5 7 9
-Add 6 : [8] 1 2 3 4 5 6 7 9
-Add 8 : [9] 1 2 3 4 5 6 7 8 9
-Add 10 : [10] 1 2 3 4 5 6 7 8 9 10
-Remove -3 : [9] 1 2 4 5 6 7 8 9 10
-Remove -6 : [8] 1 2 4 5 7 8 9 10
-Remove -3 : [8] 1 2 4 5 7 8 9 10
-Final: 1 2 4 5 7 8 9 10 
-
-*/

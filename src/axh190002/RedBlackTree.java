@@ -2,7 +2,10 @@
  */
 package axh190002;
 
+import axh190002.BinarySearchTree.Entry;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -11,7 +14,7 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
     private static final boolean RED = true;
     private static final boolean BLACK = false;
     private static Entry NILL_NODE = new RedBlackTree.Entry<>(null,null,null,false);
-    static class Entry<T> extends BinarySearchTree.Entry<T> {
+    static class Entry<T extends Comparable<? super T>> extends BinarySearchTree.Entry<T> {
         boolean color;
         Entry(T x, Entry<T> left, Entry<T> right) {
             super(x, left, right);
@@ -36,84 +39,92 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
     }
 
     public boolean add(T x) {
-         return add(new RedBlackTree.Entry<>(x,NILL_NODE,NILL_NODE));
-    }
+  //  System.out.println("Inserting :"+x.toString());
+      Entry cur = new Entry<>(x,NILL_NODE,NILL_NODE);
+      cur = ((Entry) super.add(cur));
+      cur.color=RED;
 
-    public boolean add(Entry<T> cur){
-    System.out.println("inserting " +cur.element);
-          boolean result=  super.add(cur);
-          //System.out.println("size "+this.stck.size());
+      if(cur==root){
+        cur.color = BLACK;
+        return true;
+      }
+      if(cur==root.left || cur==this.root.right )
+      {
+        this.stck.clear();
+        return true;
+      }
 
-           cur.color=RED;
+      Entry gP = (Entry) stck.peek();
+      if(cur.element.compareTo(gP.element) > 0)
+        stck.push(gP.right);
+      else stck.push(gP.left);
 
-        if(cur==root.left || cur==this.root.right)
-        {
-            this.stck.clear();
-            return result;
-        }
+
+
       while(cur != this.root && getParent(cur).color!=BLACK ){
-          if(getParent(cur)==getGrandParent(cur).left){
-            RedBlackTree.Entry<T> uncle = (Entry<T>) getGrandParent(cur).right;
-            if(uncle.color==RED){
-          System.out.println("case 1");
-              getParent(cur).color=BLACK;
-              uncle.color=BLACK;
-                cur= getGrandParent(cur);
-                stck.pop();
-                stck.pop();
-                cur.color=RED;
-        } else {
-          if (cur == getParent(cur).right) {
-            System.out.println("case 2");
-            RedBlackTree.Entry temp =cur;
-            cur = getParent(cur);
-            this.stck.pop();
-            leftRotate(cur);
-            stck.push(temp);
-          }
-          getParent(cur).color = BLACK;
-          getGrandParent(cur).color = RED;
-          RedBlackTree.Entry grandParent = getGrandParent(cur);
-              RedBlackTree.Entry<T> parentOfCurrent = (Entry<T>) this.stck.pop();
+        if(getParent(cur)==getGrandParent(cur).left){
+          RedBlackTree.Entry<T> uncle = (Entry<T>) getGrandParent(cur).right;
+          if(uncle.color==RED){
+         //   System.out.println("left sub tree case 1");
+            getParent(cur).color=BLACK;
+            uncle.color=BLACK;
+            cur= getGrandParent(cur);
+            stck.pop();
+            stck.pop();
+            cur.color=RED;
+          } else {
+            if (cur == getParent(cur).right) {
+         //     System.out.println("left sub tree case 2");
+              RedBlackTree.Entry temp =cur;
+              cur = getParent(cur);
               this.stck.pop();
-              System.out.println("case 3");
-              rightRotate(grandParent);
-             this.stck.push(parentOfCurrent);
+              leftRotate(cur);
+              stck.push(temp);
             }
+            getParent(cur).color = BLACK;
+            getGrandParent(cur).color = RED;
+            RedBlackTree.Entry grandParent = getGrandParent(cur);
+            RedBlackTree.Entry<T> parentOfCurrent = (Entry<T>) this.stck.pop();
+            this.stck.pop();
+         //   System.out.println("left sub tree case 3");
+            rightRotate(grandParent);
+            this.stck.push(parentOfCurrent);
+          }
+        }
+        else{
+          RedBlackTree.Entry<T> uncle = (Entry<T>)getGrandParent(cur).left;
+
+          if(uncle.color==RED){
+            getParent(cur).color=BLACK;
+            uncle.color=BLACK;
+            cur =getGrandParent(cur);
+            stck.pop();
+            stck.pop();
+            cur.color=RED;
           }
           else{
-                RedBlackTree.Entry<T> uncle = (Entry<T>)getGrandParent(cur).left;
-
-                if(uncle.color==RED){
-                  getParent(cur).color=BLACK;
-                  uncle.color=BLACK;
-                  cur =getGrandParent(cur);
-                  stck.pop();
-                  stck.pop();
-                  cur.color=RED;
-                }
-                else{
-                   if(cur == getParent(cur).left){
-                     RedBlackTree.Entry temp =cur;
-                     cur = getParent(cur);
-                     stck.pop();
-                     rightRotate(cur);
-                     stck.push(temp);
-                   }
-                   getParent(cur).color=BLACK;
-                   getGrandParent(cur).color=RED;
-                    RedBlackTree.Entry grandParent=getGrandParent(cur);
-                  RedBlackTree.Entry<T> parentOfCurrent = (Entry<T>) this.stck.pop();
-                  this.stck.pop();
-                  System.out.println("case 3");
-                   leftRotate(grandParent);
-                  this.stck.push(parentOfCurrent);
-                }
-
+            if(cur == getParent(cur).left){
+        //    System.out.println("case 2");
+              RedBlackTree.Entry temp =cur;
+              cur = getParent(cur);
+              stck.pop();
+              rightRotate(cur);
+              stck.push(temp);
+            }
+            getParent(cur).color=BLACK;
+            getGrandParent(cur).color=RED;
+            RedBlackTree.Entry grandParent=getGrandParent(cur);
+            RedBlackTree.Entry<T> parentOfCurrent = (Entry<T>) stck.pop();
+            this.stck.pop();
+         //   System.out.println("case 3");
+            leftRotate(grandParent);
+            this.stck.push(parentOfCurrent);
           }
 
-
         }
+
+
+      }
       ((Entry)this.root).color=BLACK;
 //    if (cur != root) {
 //      System.out.println("cur element is " + cur.element);
@@ -124,23 +135,138 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
 //      System.out.println("cur "+cur.element);
 //    }
 
-    this.stck.clear();
-    return result;
+      this.stck.clear();
+      return cur==null?false:true;
     }
-    public Entry remove(Entry x){
-         RedBlackTree.Entry removed = (Entry) super.remove(x);
-         System.out.println(removed.element);
-         System.out.println(removed.color);
-          return removed;
-    }
-
-
 
     public T remove(T x){
-         RedBlackTree.Entry removed= remove(new Entry(x,null,null));
-         return (T) removed.element;
+      T removed=super.remove(x);
+    System.out.println("after bst remove");
+     printLevelOrder();
+    System.out.println("Stack:");
+      System.out.println("spliced color "+((Entry)replaced).color);
+      System.out.println("spliced element "+replaced.element);
+      Entry deleted = (Entry) this.stck.pop();
+      System.out.println("deleted element color "+((Entry)deleted).color);
+
+      Entry spliced = new Entry(replaced.element,null,null);
+      spliced.color =  ((Entry)replaced).color;
+      ((Entry)replaced).color = deleted.color;
+       //RedBlackTree.Entry cur= (RedBlackTree.Entry) (((Entry)this.stck.peek()));
+//
+////      while(!stck.isEmpty())
+////      System.out.println("stck pop "+stck.pop().element);
+//      while(stck.peek().element!=cur.element)
+//       System.out.println("stcke pop "+stck.pop().element);
+//       this.stck.pop();
+//      System.out.println("parent "+getParent(cur).element);
+
+
+
+
+//     System.out.println("parent "+getParent(cur));
+//      // System.out.println("stcke pop "+stck.pop().element);
+
+      if(deleted.color==BLACK){
+        fixUp(spliced);
+      }
+      return removed;
     }
 
+  private void fixUp(Entry cur) {
+      System.out.println("in fix up");
+
+      while(cur!=root  &&  cur.color==BLACK){
+     printLevelOrder();
+        System.out.println("in");
+        RedBlackTree.Entry parent = getParent(cur);
+        System.out.println("parent fix up"+getParent(cur).element);
+         if(parent.left==cur){
+           RedBlackTree.Entry sib= (RedBlackTree.Entry) parent.right;
+           if(sib.color==RED){
+          System.out.println("left child case 1");
+             sib.color=BLACK;
+             parent.color=RED;
+             Entry<T> temp = (Entry<T>) stck.pop();
+             leftRotate(parent);
+             this.stck.push(sib);
+             this.stck.push(temp);
+             sib=getSibling(cur);
+           }
+          if( ((Entry)sib.left).color==BLACK && ((Entry)sib.right).color==BLACK){
+            System.out.println("left child case 2");
+            sib.color=RED;
+            cur = parent;
+            stck.pop();
+            parent = getParent(cur);
+          }
+          else {
+            if(((Entry)sib.right).color == BLACK){
+              System.out.println("left child case 3");
+              ((Entry) sib.left).color=BLACK;
+              sib.color=RED;
+              rightRotate(sib);
+              sib = getSibling(cur);
+            }
+
+           System.out.println("left child case 4");
+            sib.color =parent.color;
+            parent.color=BLACK;
+           ((Entry)sib.right).color=BLACK;
+            leftRotate(parent);
+            cur= (Entry) root;
+
+          }// System.out.println("parent  cur"+getParent(cur).element);
+      }
+       else{
+           RedBlackTree.Entry sib= getSibling(cur);
+           if(sib.color==RED){
+             System.out.println("case 1");
+             sib.color=BLACK;
+             parent.color=RED;
+             Entry<T> temp = (Entry<T>) stck.pop();
+             rightRotate(parent);
+             stck.push(sib);
+             stck.push(temp);
+             sib=getSibling(cur);
+             System.out.println("sibling "+sib.element);
+             printLevelOrder();
+           }
+           if( ((Entry)sib.left).color==BLACK && ((Entry)sib.right).color==BLACK){
+             System.out.println("case 2");
+             sib.color=RED;
+
+          System.out.println("sib "+ sib.element);
+             cur = parent;
+           //  sib=getSibling(cur);
+             stck.pop();
+             parent = getParent(cur);
+        }
+           else {
+          if (((Entry) sib.left).color == BLACK) {
+            System.out.println("case 3");
+            ((Entry) sib.right).color = BLACK;
+            sib.color = RED;
+            leftRotate(sib);
+            sib = getSibling(cur);
+            printLevelOrder();
+          }
+
+          System.out.println("case 4");
+          ((Entry) sib).color = parent.color;
+          parent.color = BLACK;
+          ((Entry) sib.left).color = BLACK;
+          Entry<T> temp = (Entry<T>) stck.pop();
+          rightRotate(temp);
+          stck.push(temp);
+          cur = (Entry) root;
+           }
+
+         }
+  }
+       cur.color=BLACK;
+      System.out.println("while out");
+}
   private void leftRotate(Entry<T> x) {
           RedBlackTree.Entry y=(RedBlackTree.Entry)x.right;
           x.right=y.left;
@@ -172,7 +298,10 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
     y.right=x;
 
   }
-
+  public Entry<T> getSibling(Entry<T> cur){
+      Entry parent = getParent(cur);
+      return (Entry<T>) (cur==parent.left?parent.right:parent.left);
+  }
   public Entry<T> getParent(Entry<T> cur){
     //        while(this.stck.peek().left!=cur || this.stck.peek().right!=cur)
     //           this.stck.pop();
@@ -191,6 +320,7 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
     }
 
 public void printLevelOrder(){
+
 
   List<List<RedBlackTree.Entry>> levels = new ArrayList<List<RedBlackTree.Entry>>();
 
@@ -234,32 +364,54 @@ public void printLevelOrder(){
     public static void main(String[] args){
 
         RedBlackTree<Integer> rb = new RedBlackTree<>();
-        rb.add(16);
-        rb.add(12);
-        rb.add(6);
-        rb.add(5);
-        rb.add(-4);
-        rb.add(-5);
-        //rb.add(-8);
-      //  rb.add(-15);
-        rb.add(-14);
-        rb.add(18);
-        rb.add(20);
-        rb.add(22);
-        rb.add(24);
-        rb.add(26);
-        rb.add(28);
-        rb.add(30);
-        rb.add(32);
-        rb.remove(30);
-       // rb.add(-13);
-       rb.printLevelOrder();
-
-
-//        rb.add(-3);
+//        rb.add(16);
+//        rb.add(12);
+//        rb.add(6);
+//        rb.add(5);
 //        rb.add(-4);
 //        rb.add(-5);
-//        rb.add(-6);
+//        rb.add(-17);
+//        rb.add(18);
+//        rb.add(20);
+//        rb.add(22);
+//        rb.add(24);
+//        rb.add(26);
+//        rb.add(28);
+//        rb.add(30);
+//        rb.add(32);
+//        rb.add(-13);
+//        rb.add(-15);
+//         rb.printLevelOrder();
+//         rb.remove(6);
+//         rb.printLevelOrder();
+   Entry root = new Entry(50,NILL_NODE,NILL_NODE);
+   root.color = BLACK;
+      Entry n45 = new Entry(45,NILL_NODE,NILL_NODE);
+      Entry n60 = new Entry(60,NILL_NODE,NILL_NODE);
+      Entry n40 = new Entry(40,NILL_NODE,NILL_NODE);
+      Entry n47 = new Entry(47,NILL_NODE,NILL_NODE);
+      Entry n55 = new Entry(55,NILL_NODE,NILL_NODE);
+      Entry n46 = new Entry(46,NILL_NODE,NILL_NODE);
+      Entry n49 = new Entry(49,NILL_NODE,NILL_NODE);
+      n40.color=BLACK;
+      n60.color=BLACK;
+      n45.color=BLACK;
+      n47.color=RED;
+      n55.color=BLACK;
+      n46.color=BLACK;
+      n49.color=BLACK;
+      root.left = n45;
+      root.right = n60;
+      n45.left = n40;
+      n45.right = n47;
+      n60.left = n55;
+      n47.left = n46;
+      n47.right = n49;
+      rb.root = root;
+      rb.size = 8;
+      rb.remove(60);
+      rb.printLevelOrder();
+
 
 
 
