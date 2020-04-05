@@ -269,7 +269,43 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
       this.stck.push(parent);
       return grandParent;
     }
+    int globalBlackCount = Integer.MIN_VALUE;
 
+    public boolean verifyRBT(){
+        if(((Entry)root).isRed())
+            return false;
+        globalBlackCount = Integer.MIN_VALUE;
+        return verifyRBTUtil((Entry<T>) root,BLACK,0);
+    }
+
+    public boolean verifyRBTUtil(Entry<T> node,boolean isred,Integer blackcount){
+        if(node == null || node.element==null) //change it to NIL node and if so check for black color too
+        {
+            if(node != NILL_NODE)
+            return false;
+
+            if(globalBlackCount == Integer.MIN_VALUE) {          //chkg the blackcount in the entire path
+                globalBlackCount = blackcount;
+                return true;
+            }
+            else if(blackcount != globalBlackCount)
+                return false;
+            else
+                return true;
+        }
+
+        T val = node.element;// BST rule chk
+        int count = blackcount;
+        if(isred) {                                            //no consecutive red nodes
+            if (node.isRed())     //if false--black node color
+                return false;
+        }
+        if(node.isBlack())
+            count++;
+        if (! verifyRBTUtil((Entry<T>) node.right, node.color, count)) return false;
+        if (! verifyRBTUtil((Entry<T>) node.left, node.color, count)) return false;
+        return true;
+    }
 public void printLevelOrder(){
 
 
@@ -309,6 +345,14 @@ public void printLevelOrder(){
     }
 
       }
-
+    public static void main(String[] arg){
+        RedBlackTree<Long> redBlackTree = new RedBlackTree<>();
+        redBlackTree.add(187L);
+        redBlackTree.add(121L);
+        redBlackTree.add(62L);
+        redBlackTree.add(166L);
+        redBlackTree.printLevelOrder();
+        System.out.println(redBlackTree.verifyRBT());
+    }
 }
 
