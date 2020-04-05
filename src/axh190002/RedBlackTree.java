@@ -149,9 +149,8 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
       Entry deleted = (Entry) this.stck.pop();
       System.out.println("deleted element color "+((Entry)deleted).color);
 
-      Entry spliced = new Entry(replaced.element,null,null);
-      spliced.color =  ((Entry)replaced).color;
-      ((Entry)replaced).color = deleted.color;
+
+     // ((Entry)replaced).color = deleted.color;
        //RedBlackTree.Entry cur= (RedBlackTree.Entry) (((Entry)this.stck.peek()));
 //
 ////      while(!stck.isEmpty())
@@ -168,6 +167,8 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
 //      // System.out.println("stcke pop "+stck.pop().element);
 
       if(deleted.color==BLACK){
+        Entry spliced = (Entry) replaced;
+        spliced.color =  deleted.color;
         fixUp(spliced);
       }
       return removed;
@@ -177,12 +178,11 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
       System.out.println("in fix up");
 
       while(cur!=root  &&  cur.color==BLACK){
-     printLevelOrder();
         System.out.println("in");
         RedBlackTree.Entry parent = getParent(cur);
         System.out.println("parent fix up"+getParent(cur).element);
          if(parent.left==cur){
-           RedBlackTree.Entry sib= (RedBlackTree.Entry) parent.right;
+           RedBlackTree.Entry sib= getSibling(cur);
            if(sib.color==RED){
           System.out.println("left child case 1");
              sib.color=BLACK;
@@ -191,7 +191,9 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
              leftRotate(parent);
              this.stck.push(sib);
              this.stck.push(temp);
+          System.out.println("here parent "+getParent(cur).element);
              sib=getSibling(cur);
+          System.out.println("Sibling "+sib.element);
            }
           if( ((Entry)sib.left).color==BLACK && ((Entry)sib.right).color==BLACK){
             System.out.println("left child case 2");
@@ -206,15 +208,30 @@ public class RedBlackTree<T extends Comparable<? super T>> extends BinarySearchT
               ((Entry) sib.left).color=BLACK;
               sib.color=RED;
               rightRotate(sib);
-              sib = getSibling(cur);
+
+            System.out.println("sibling 3"+sib.element);
+            System.out.println("parent "+getParent(cur).element);
+            sib = getSibling(cur);
             }
 
            System.out.println("left child case 4");
             sib.color =parent.color;
             parent.color=BLACK;
            ((Entry)sib.right).color=BLACK;
-            leftRotate(parent);
+           System.out.println("parent "+parent.element);
+            Entry temp = (Entry) stck.pop();
+            printLevelOrder();
+            leftRotate(temp);
+            stck.push(temp);
             cur= (Entry) root;
+
+//            ((Entry) sib).color = parent.color;
+//            parent.color = BLACK;
+//            ((Entry) sib.left).color = BLACK;
+//            Entry<T> temp = (Entry<T>) stck.pop();
+//            rightRotate(temp);
+//            stck.push(temp);
+//            cur = (Entry) root;
 
           }// System.out.println("parent  cur"+getParent(cur).element);
       }
@@ -386,30 +403,37 @@ public void printLevelOrder(){
 //         rb.printLevelOrder();
    Entry root = new Entry(50,NILL_NODE,NILL_NODE);
    root.color = BLACK;
-      Entry n45 = new Entry(45,NILL_NODE,NILL_NODE);
+      Entry n25 = new Entry(25,NILL_NODE,NILL_NODE);
       Entry n60 = new Entry(60,NILL_NODE,NILL_NODE);
-      Entry n40 = new Entry(40,NILL_NODE,NILL_NODE);
-      Entry n47 = new Entry(47,NILL_NODE,NILL_NODE);
-      Entry n55 = new Entry(55,NILL_NODE,NILL_NODE);
-      Entry n46 = new Entry(46,NILL_NODE,NILL_NODE);
-      Entry n49 = new Entry(49,NILL_NODE,NILL_NODE);
-      n40.color=BLACK;
+      Entry n24 = new Entry(24,NILL_NODE,NILL_NODE);
+      Entry n30 = new Entry(30,NILL_NODE,NILL_NODE);
+      Entry n29 = new Entry(29,NILL_NODE,NILL_NODE);
+      Entry n31 = new Entry(31,NILL_NODE,NILL_NODE);
+      Entry n65 = new Entry(65,NILL_NODE,NILL_NODE);
+      Entry n26 = new Entry(26,NILL_NODE,NILL_NODE);
+      Entry n23 = new Entry(23,NILL_NODE,NILL_NODE);
+      n25.color=RED;
       n60.color=BLACK;
-      n45.color=BLACK;
-      n47.color=RED;
-      n55.color=BLACK;
-      n46.color=BLACK;
-      n49.color=BLACK;
-      root.left = n45;
+      n24.color=BLACK;
+      n30.color=BLACK;
+      n29.color=RED;
+      n31.color=BLACK;
+      n65.color= BLACK;
+      n23.color=BLACK;
+      n26.color=BLACK;
+
+      root.left = n25;
       root.right = n60;
-      n45.left = n40;
-      n45.right = n47;
-      n60.left = n55;
-      n47.left = n46;
-      n47.right = n49;
+      n60.right =n65;
+      n25.left = n24;
+      n24.left =n23;
+      n25.right = n30;
+      n30.left = n29;
+      n30.right = n31;
+      n29.left =n26;
       rb.root = root;
-      rb.size = 8;
-      rb.remove(60);
+      rb.size = 10;
+      rb.remove(24);
       rb.printLevelOrder();
 
 
