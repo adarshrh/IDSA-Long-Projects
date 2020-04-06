@@ -1,3 +1,11 @@
+/**
+ * IDSA Long Project 3
+ * Group members:
+ * Adarsh Raghupati   axh190002
+ * Akash Akki         apa190001
+ * Keerti Keerti      kxk190012
+ * Stewart cannon     sjc160330
+ */
 
 package axh190002;
 
@@ -28,42 +36,22 @@ public class RedBlackTreeDriver {
 			switch (operation) {
 				case "Add": {
 					operand = sc.nextLong();
-					System.out.println("Add "+operand);
 					if(redBlackTree.add(operand)) {
 						result = (result + 1) % modValue;
-						redBlackTree.printLevelOrder();
-						//System.out.println(redBlackTree.verifyRBT());
-						if(!redBlackTree.verifyRBT()){
-							redBlackTree.printLevelOrder();
-							System.out.println("Verify failed");
-							System.exit(1);
-						}
 					}
 					break;
 				}
 				case "Remove": {
 					operand = sc.nextLong();
-					System.out.println("Remove "+operand);
 					if (redBlackTree.remove(operand) != null) {
 						result = (result + 1) % modValue;
-						if(!redBlackTree.verifyRBT()){
-							redBlackTree.printLevelOrder();
-							System.out.println("Verify failed");
-							System.exit(1);
-						}
 					}
 					break;
 				}
 				case "Contains":{
 					operand = sc.nextLong();
-					System.out.println("Contains "+operand);
 					if (redBlackTree.contains(operand)) {
 						result = (result + 1) % modValue;
-						if(!redBlackTree.verifyRBT()){
-							redBlackTree.printLevelOrder();
-							System.out.println("Verify failed");
-							System.exit(1);
-						}
 					}
 					break;
 				}

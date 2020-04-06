@@ -1,3 +1,11 @@
+/**
+ * IDSA Long Project 3
+ * Group members:
+ * Adarsh Raghupati   axh190002
+ * Akash Akki         apa190001
+ * Keerti Keerti      kxk190012
+ * Stewart cannon     sjc160330
+ */
 
 package axh190002;
 import java.io.File;

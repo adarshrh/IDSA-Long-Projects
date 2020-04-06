@@ -1,4 +1,11 @@
-/* Starter code for LP3 */
+/**
+ * IDSA Long Project 3
+ * Group members:
+ * Adarsh Raghupati   axh190002
+ * Akash Akki         apa190001
+ * Keerti Keerti      kxk190012
+ * Stewart cannon     sjc160330
+ */
 
 // Change this to netid of any member of team
 package axh190002;
@@ -32,8 +39,9 @@ public class SkipList<T extends Comparable<? super T>> {
 	}
     }
 
-
-    // Constructor
+    /**
+     * Initialize skip list
+     */
     public SkipList() {
         head = new Entry<T>(null,maxLevel+1);
         tail = new Entry<T>(null,maxLevel+1 );
@@ -65,7 +73,10 @@ public class SkipList<T extends Comparable<? super T>> {
         }
     }
 
-
+    /**
+     * Finds the elements last visited in each level in the search path
+     * @param x
+     */
     public void findPred(T x){
         Entry<T> p = head;
         int distance = 0;
@@ -79,6 +90,10 @@ public class SkipList<T extends Comparable<? super T>> {
         }
     }
 
+    /**
+     * Randomly chooses height for insertion
+     * @return
+     */
     public int chooseHeight(){
         int lev = 1 + Integer.numberOfTrailingZeros(random.nextInt());
         lev = Math.min(lev,maxLevel);
@@ -86,12 +101,15 @@ public class SkipList<T extends Comparable<? super T>> {
         return lev;
     }
 
-    // Add x to list. If x already exists, reject it. Returns true if new node is added to list
+    /**
+     *  Add x to list. If x already exists, reject it. Returns true if new node is added to list
+     * @param x
+     * @return
+     */
     public boolean add(T x) {
         if(contains(x))
             return false;
         int lev = chooseHeight();
-       // System.out.println("Inserting "+x.toString()+" at level:"+lev+" dis:"+span[0]);
         Entry<T> ent = new Entry<>(x,lev);
         int distance = span[0];
         for(int i=0 ; i< lev ; i++){
@@ -114,7 +132,11 @@ public class SkipList<T extends Comparable<? super T>> {
 	return null;
     }
 
-    // Does list contain x?
+    /**
+     * Returns true if element is present in the list
+     * @param x
+     * @return
+     */
     public boolean contains(T x) {
         findPred(x);
         return pred[0].next[0].element != null && pred[0].next[0].element.compareTo(x) == 0;
@@ -130,14 +152,22 @@ public class SkipList<T extends Comparable<? super T>> {
 	return null;
     }
 
-    // Return element at index n of list.  First element is at index 0.
+    /**
+     * Return element at index n of list.  First element is at index 0.
+     * @param n
+     * @return
+     */
     public T get(int n) {
-       // return getLinear(n);
         return getLog(n);
     }
 
 
-    // O(n) algorithm for get(n)
+
+    /**
+     * O(n) algorithm for get(n)
+     * @param n
+     * @return
+     */
     public T getLinear(int n) {
         if(n<0 || n > size-1 )
             throw new NoSuchElementException();
@@ -251,15 +281,11 @@ public class SkipList<T extends Comparable<? super T>> {
             set.add(num);
             sl.add(num);
         }
-      /*  sl.add(4);
-        sl.add(2);
-        sl.add(5);*/
         System.out.println("Inserted elements:"+set.toString());
-        sl.printList();
         sl.remove(num);
-        System.out.println("Removed "+num);
+        System.out.println("Remove :"+num);
         sl.printList();
-        System.out.println("0th num is"+sl.get(0));
+        System.out.println("Get(0) :"+sl.get(0));
 
     }
 }
