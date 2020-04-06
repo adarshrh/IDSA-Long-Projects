@@ -7,7 +7,7 @@
  * Stewart cannon     sjc160330
  */
 
-####Implementation of Strongly connected components, Euler tour, PERT
+####Implementation of Red Black Tree, Skip List and their comparison with Java's TreeSet
 
 ###### Steps to run the code in IntelliJ IDE
 * Create an empty java project
