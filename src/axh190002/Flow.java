@@ -1,4 +1,13 @@
-package axh190002;// Starter code for max flow
+/**
+ * IDSA Long Project 5
+ * Group members:
+ * Adarsh Raghupati   axh190002
+ * Akash Akki         apa190001
+ * Keerti Keerti      kxk190012
+ * Stewart cannon     sjc160330
+ */
+
+package axh190002;
 
 import axh190002.Graph.*;
 
@@ -55,7 +64,7 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
 
 
     /**
-     * Calculates Max-flow of the graph using pre-flow push algorithm
+     * Calculates Maximum flow of the graph using FIFO preflow-push algorithm
      *
      * @return
      */
