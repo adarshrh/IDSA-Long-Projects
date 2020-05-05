@@ -7,7 +7,7 @@
  * Keerti Keerti      kxk190012
  * Stewart cannon     sjc160330
  */
-package axh190002;
+package axh190002.lp3;
 
 import java.util.Iterator;
 import java.util.Scanner;

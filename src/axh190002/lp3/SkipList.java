@@ -8,7 +8,7 @@
  */
 
 // Change this to netid of any member of team
-package axh190002;
+package axh190002.lp3;
 
 import java.util.*;
 

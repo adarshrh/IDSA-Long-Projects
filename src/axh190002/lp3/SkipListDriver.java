@@ -7,7 +7,7 @@
  * Stewart cannon     sjc160330
  */
 
-package axh190002;
+package axh190002.lp3;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
