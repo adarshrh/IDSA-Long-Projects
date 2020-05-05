@@ -9,10 +9,16 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
     Graph flowGraph;
     Vertex s,t;
     HashMap<Edge,Integer> capacity;
-    HashMap<Edge,Integer> flow;
+    HashMap<Edge,Integer> flow;  //Keeps track of flow in each edge
     Queue<Vertex> queue;
-    HashSet<Edge> saturated;
 
+    /**
+     * Initialize Graph, Source, Target and Capacity of edges
+     * @param g
+     * @param s
+     * @param t
+     * @param capacity
+     */
     public Flow(Graph g, Vertex s, Vertex t, HashMap<Edge, Integer> capacity) {
         super(g,new FlowVertex((Vertex) null));
         flowGraph=g;
@@ -21,16 +27,15 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
         this.capacity=capacity;
         this.flow= new HashMap<>(capacity.size());
         queue = new LinkedList<>();
-        saturated = new HashSet<>();
 
     }
 
 
     public static class FlowVertex implements  Factory {
-        int height;
+        int height; //Distance of target/sink from the vertex
         int excess;
         boolean seen;
-        boolean inQueue;
+        boolean inQueue; //To keep track of nodes present in the queue
 
         FlowVertex(Vertex u) {
             height = 0;
@@ -39,13 +44,21 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
             inQueue=false;
         }
 
+        /**
+         * Used to create FlowVertex by  GraphAlgorithm
+         * @param u
+         * @return
+         */
         public FlowVertex make(Vertex u) { return new FlowVertex(u); }
 
     }
 
 
-
-    // Return max flow found. Use either relabel to front or FIFO.
+    /**
+     * Calculates Max-flow of the graph using pre-flow push algorithm
+     *
+     * @return
+     */
     public int preflowPush() {
         initialize();
         while (queue.size()>0){
@@ -55,28 +68,27 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
             if(get(u).excess>0){
                 relabel(u);
             }
-           // printFlowGraph();
         }
 
 	return get(t).excess;
     }
 
 
-
+    /**
+     * Updates the flow going out of the vertex u
+     * @param u
+     */
     private void discharge(Vertex u) {
-       // System.out.println("discharge "+u.name);
         FlowVertex cur = get(u);
         boolean flag = false;
+        //For all outgoing edges (u,v)
         for(Edge edge: flowGraph.outEdges(u)){
             Vertex v = edge.to;
-            if(cur.height == get(v).height+1 && !saturated.contains(edge)){
-                int delta = Math.min(cur.excess,capacity.get(edge)-flow.get(edge));
-                if((flow.get(edge)+delta)==capacity.get(edge)){
-                    saturated.add(edge);
-                }
+            if(cur.height == get(v).height+1 && (capacity(edge)-flow(edge))>0){
+                int delta = Math.min(cur.excess,capacity(edge)-flow(edge));
                 if(delta > 0){
                     flag=true;
-                    flow.put(edge,flow.get(edge)+delta);
+                    flow.put(edge,flow(edge)+delta);
                     cur.excess = cur.excess-delta;
                     get(v).excess = get(v).excess+delta;
                     if(!get(v).inQueue && v.name!=s.name && v.name!=t.name){
@@ -90,16 +102,16 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
 
             }
         }
+        //If there are no outgoing edges; check for outgoing edges in residual graph
         if(!flag){
+            //In edges in the given graph will be outgoing edges in residual graph provided some flow exists in the edge
             for(Edge edge: flowGraph.inEdges(u)){
                 Vertex v = edge.from;
-                if(cur.height == get(v).height+1 && flow.get(edge)>0){
-                    int delta = Math.min(cur.excess,flow.get(edge));
+                if(cur.height == get(v).height+1 && flow(edge)>0){
+                    int delta = Math.min(cur.excess,flow(edge));
                     if(delta > 0){
-                        flow.put(edge,flow.get(edge)-delta);
-                        if(flow.get(edge)< capacity.get(edge)){
-                            saturated.remove(edge);
-                        }
+                        //push back the excess flow in the residual edge
+                        flow.put(edge,flow(edge)-delta);
                         cur.excess = cur.excess-delta;
                         get(v).excess = get(v).excess+delta;
                         if(!get(v).inQueue && v.name!=s.name && v.name!=t.name){
@@ -119,29 +131,32 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
     }
 
 
-
+    /**
+     * Updates the height of the vertex and adds the vertex to the queue
+     * @param u
+     */
     private void relabel(Vertex u) {
         int ht=Integer.MAX_VALUE;
-       // boolean flag=false;
+        //Check outgoing edges
         for(Edge edge: flowGraph.outEdges(u)){
-            if(!saturated.contains(edge)) {
+            if((capacity(edge)-flow(edge))>0) {
                 ht = Math.min(ht, get(edge.to).height);
-               // flag=true;
             }
         }
-      //  if(!flag){
+        //Check outgoing edges in residual graph
             for(Edge edge: flowGraph.inEdges(u)){
-                if(flow.get(edge)>0) {
+                if(flow(edge)>0) {
                     ht = Math.min(ht, get(edge.from).height);
                 }
             }
-        //}
         get(u).height = 1+ht;
         get(u).inQueue=true;
         queue.add(u);
     }
 
-
+    /**
+     * Initialize all vertex with height,excess and edges with flow 0
+     */
     public void initialize(){
         //Set initial flow of all edges to 0
        for(Edge edge : flowGraph.getEdgeArray()){
@@ -149,9 +164,8 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
        }
        initializeHeight();
        for(Edge edge: flowGraph.outEdges(s)){
-           int cp = capacity.get(edge);
+           int cp = capacity(edge);
            flow.put(edge,cp);
-           saturated.add(edge);
            get(s).excess = get(s).excess-cp;
            get(edge.to).excess = get(edge.to).excess + cp;
            get(edge.to).inQueue=true;
@@ -161,6 +175,9 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
 
     }
 
+    /**
+     * Calculates height of the vertex from the sink/target
+     */
     public void initializeHeight(){
         get(t).height = 0;
         Queue<Vertex> queue = new LinkedList<>();
@@ -179,7 +196,7 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
         }
     }
 
-    private void printFlowGraph() {
+/*    private void printFlowGraph() {
         System.out.println();
         System.out.println("-------------------------------");
         for(Vertex vertex: flowGraph.getVertexArray()){
@@ -190,16 +207,24 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
             }
         }
         System.out.println();
-    }
+    }*/
 
-    // flow going through edge e
+    /**
+     * Returns flow through the given edge
+     * @param e
+     * @return
+     */
     public int flow(Edge e) {
-	return 0;
+	return flow.get(e);
     }
 
-    // capacity of edge e
+    /**
+     * Returns the capacity of the given edge
+     * @param e
+     * @return
+     */
     public int capacity(Edge e) {
-	return 0;
+	return capacity.get(e);
     }
 
     /* After maxflow has been computed, this method can be called to
