@@ -205,18 +205,6 @@ public class Flow extends GraphAlgorithm<Flow.FlowVertex> {
         }
     }
 
-/*    private void printFlowGraph() {
-        System.out.println();
-        System.out.println("-------------------------------");
-        for(Vertex vertex: flowGraph.getVertexArray()){
-            FlowVertex v = get(vertex);
-            System.out.print(vertex.name+":"+" ex:"+v.excess+" h:"+v.height+" ");
-            for(Edge edge: flowGraph.outEdges(vertex)){
-                System.out.print(" ("+edge.from.name+","+edge.to.name+"):"+flow.get(edge)+" ");
-            }
-        }
-        System.out.println();
-    }*/
 
     /**
      * Returns flow through the given edge
